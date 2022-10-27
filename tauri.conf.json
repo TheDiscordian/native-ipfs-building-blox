@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "disco_chat",
+    "productName": "ipfs_app",
     "version": "0.1.0"
   },
   "tauri": {
@@ -31,7 +31,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "disco.chat",
+      "identifier": "ipfs.app",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -60,7 +60,7 @@
         "fullscreen": false,
         "height": 768,
         "resizable": true,
-        "title": "Disco Chat",
+        "title": "IPFS Application",
         "width": 1265,
         "minWidth": 992,
         "minHeight": 250
