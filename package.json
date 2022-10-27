@@ -1,0 +1,26 @@
+{
+  "name": "native-ipfs-building-blox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheDiscordian/native-ipfs-building-blox.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheDiscordian/native-ipfs-building-blox/issues"
+  },
+  "scripts": {
+    "build": "python3 tools/copyImports.py"
+  },
+  "homepage": "https://github.com/TheDiscordian/native-ipfs-building-blox#readme",
+  "dependencies": {
+    "ipfs-http-client": "^59.0.0"
+  }
+}
