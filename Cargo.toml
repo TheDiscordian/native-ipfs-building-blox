@@ -1,11 +1,11 @@
 [package]
-name = "disco_chat"
+name = "ipfs_app"
 version = "0.1.0"
-description = "Disco Chat"
-authors = ["Discordian"]
+description = "IPFS Application"
+authors = [""]
 license = "MIT"
 repository = ""
-default-run = "disco_chat"
+default-run = "ipfs_app"
 edition = "2021"
 rust-version = "1.57"
 

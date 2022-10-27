@@ -15,7 +15,7 @@ const REPO_PATH: &str = ".kubo";
 
 #[tokio::main]
 async fn main() {
-  if !Path::new(".discochat").is_dir() {
+  if !Path::new(REPO_PATH).is_dir() {
     let mut init = Command::new_sidecar("kubo").unwrap();
     init = init.args(["init",
       "--repo-dir", REPO_PATH]);
