@@ -9,6 +9,15 @@ This is a work in progress, there be 🐉.
 
 ## Setup
 
+### Clone Repo
+
+Clone the repository, and cd into it.
+
+```sh
+git clone https://github.com/TheDiscordian/native-ipfs-building-blox.git
+cd native-ipfs-building-blox
+```
+
 ### Install Tauri
 
 ```sh
