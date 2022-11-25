@@ -36,7 +36,9 @@ async fn main() {
 		SWARM_PORT = rng.gen_range(49152..65535);
 
 		if API_PORT == SWARM_PORT {
-			println!("API & SWARM ports generated the same number! Try running the application again...");
+			println!(
+				"API & SWARM ports generated the same number! Try running the application again..."
+			);
 			exit(1);
 		}
 	}
@@ -47,19 +49,6 @@ async fn main() {
 		// ipfs init --repo-dir REPO_PATH
 		let mut init = Command::new_sidecar("kubo").unwrap();
 		init = init.args(["init", "--repo-dir", REPO_PATH]);
-		init.output().unwrap();
-
-		// Allow tauri://localhost to control our daemon
-		// ipfs config --json --repo-dir REPO_PATH API.HTTPHeaders.Access-Control-Allow-Origin ["tauri://localhost"]
-		init = Command::new_sidecar("kubo").unwrap();
-		init = init.args([
-			"config",
-			"--json",
-			"--repo-dir",
-			REPO_PATH,
-			"API.HTTPHeaders.Access-Control-Allow-Origin",
-			"[\"tauri://localhost\"]",
-		]);
 		init.output().unwrap();
 
 		// Enable IPNS Pubsub (https://github.com/ipfs/kubo/blob/master/docs/experimental-features.md#ipns-pubsub)
@@ -104,21 +93,31 @@ async fn main() {
 	// Configure the swarm port
 	let swarm_port_str = &get_swarm_port().to_string();
 	daemon = Command::new_sidecar("kubo").unwrap();
+	daemon =
+		daemon.args([
+			"config",
+			"--json",
+			"--repo-dir",
+			REPO_PATH,
+			"Addresses.Swarm",
+			&("[\"/ip4/0.0.0.0/tcp/".to_owned()
+				+ swarm_port_str + "\",\"/ip6/::/tcp/"
+				+ swarm_port_str + "\",\"/ip4/0.0.0.0/udp/"
+				+ swarm_port_str + "/quic\", \"/ip6/::/udp/"
+				+ swarm_port_str + "/quic\"]"),
+		]);
+	daemon.output().unwrap();
+
+	// Allow tauri://localhost to control our daemon
+	// ipfs config --json --repo-dir REPO_PATH API.HTTPHeaders.Access-Control-Allow-Origin ["tauri://localhost"]
+	daemon = Command::new_sidecar("kubo").unwrap();
 	daemon = daemon.args([
 		"config",
 		"--json",
 		"--repo-dir",
 		REPO_PATH,
-		"Addresses.Swarm",
-		&("[\"/ip4/0.0.0.0/tcp/".to_owned()
-			+ swarm_port_str
-			+ "\",\"/ip6/::/tcp/"
-			+ swarm_port_str
-			+ "\",\"/ip4/0.0.0.0/udp/"
-			+ swarm_port_str
-			+ "/quic\", \"/ip6/::/udp/"
-			+ swarm_port_str
-			+ "/quic\"]"),
+		"API.HTTPHeaders.Access-Control-Allow-Origin",
+		"[\"tauri://localhost\",\"http://127.0.0.1:1430\"]",
 	]);
 	daemon.output().unwrap();
 
