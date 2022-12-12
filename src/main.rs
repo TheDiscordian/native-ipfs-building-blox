@@ -2,6 +2,8 @@
 	all(not(debug_assertions), target_os = "windows"),
 	windows_subsystem = "windows"
 )]
+use futures::{future, select, FutureExt, StreamExt, TryStreamExt};
+use ipfs_api_backend_hyper::{IpfsApi, TryFromUri, IpfsClient}; // https://github.com/ferristseng/rust-ipfs-api/blob/master/ipfs-api-examples/examples/pubsub.rs & https://docs.rs/ipfs-api-backend-hyper/latest/ipfs_api_backend_hyper/trait.TryFromUri.html#method.from_str
 use rand::Rng;
 use std::path::Path;
 use std::process::exit;
@@ -16,6 +18,34 @@ const REPO_PATH: &str = ".kubo";
 
 static mut API_PORT: u32 = 0;
 static mut SWARM_PORT: u32 = 0;
+
+// TODO: unsub, use callback for js function (https://docs.rs/tauri/1.0.0-rc.6/tauri/window/struct.Window.html)
+#[tauri::command()]
+async fn subscribe_to_topic(window: tauri::Window, topic: &str, func: &str) -> Result<(), ()> {
+	window.eval(&(format!("console.log('{}');", func)));
+	tokio::spawn(async move {
+		let client = IpfsClient::from_str(&("http://localhost:".to_owned() + &get_api_port().to_string())).unwrap();
+
+		client
+			.pubsub_sub(topic)
+			.take(5)
+			.try_for_each(|msg| {
+				eprintln!();
+				eprintln!("received ({:?})", msg);
+
+				future::ok(())
+			})
+			.await;
+	});
+	Ok(())
+
+	/*select! {
+        res = sub => match res {
+            Ok(_) => eprintln!("done reading messages..."),
+            Err(e) => eprintln!("error reading messages: {}", e)
+        },
+    };*/
+}
 
 #[tauri::command]
 fn get_api_port() -> u32 {
@@ -151,7 +181,7 @@ async fn main() {
 
 	// Run Tauri application (this blocks until webview is closed)
 	tauri::Builder::default()
-		.invoke_handler(tauri::generate_handler![get_api_port, get_swarm_port])
+		.invoke_handler(tauri::generate_handler![get_api_port, get_swarm_port, subscribe_to_topic])
 		.run(tauri::generate_context!())
 		.expect("error while running tauri application");
 
